@@ -1,0 +1,115 @@
+---
+title: "HW_2"
+author: "MGinorio"
+date: "2/14/2021"
+output: html_document
+---
+
+## Assignment # 2
+
+** Choose six recent popular movies. 
+** Ask at least five people that you know (friends, family, classmates, imaginary friends if necessary) to rate each of these movies that they have seen on a scale of 1 to 5. 
+** Take the results (observations) and store them in a SQL database of your choosing. Load the information from the SQL database into an R dataframe.
+
+
+```{r}
+# install packages RmySQL
+library(RMySQL)
+library(dplyr)
+library(ggplot2)
+library(psych)
+library(dotenv)
+# establish connection with MySQL
+
+
+```
+## sTEP 2. SETTINGS
+
+```{r}
+db_user       <- "root"
+db_password   <- "newrootpassword"
+db_name       <- "movies_db"
+db_table      <- "friends_info"
+db_host       <- "localhost"
+db_port       <-  3306
+
+```
+
+## Connect to the MySql database and retrieve the data:
+
+
+```{r}
+myConnection <- dbConnect(MySQL(), user = db_user, password = db_password,
+                          dbname = db_name, host = db_host, port = db_port)
+```
+
+## Use survey software to gather the information.
+Google form/ survey used for collecting data added to Repository
+
+## Are you able to use a password without having to share the password with people who are viewing your code?
+
+One of the most interesting approaches i found by the research is to create a .env file and save the password there. The file .env has been added to the gitignore file in github.
+
+## While it’s acceptable to create a single SQL table, can you create a normalized set of tables that corresponds to the relationship between your movie viewing friends and the movies being rated?
+
+I created 4 different set of tables each one of them with a primary key.
+** Friends_info > indicates Friend_ID, Name, Genre
+** Friends_ Rating > indicates the value each movie has been given.
+** Movie_ ID > indicates the movie name and genre
+**Movie_ratings > the overall ratings from all the participants in the survey
+
+## Creating a query connected to MySQL
+
+```{r}
+query <- 'Select Friend ID, Name, Gender from Friends_info'
+
+```
+
+## Obtain Data from csv in github
+```{r}
+movies_info <-read.csv("https://raw.githubusercontent.com/mgino11/SQL_likert/main/Movie_ID.csv")
+
+glimpse(movies_info)
+```
+```{r}
+movies_info %>%
+  count(Movie_genre) %>%
+  arrange(desc(n))
+```
+## Is there any benefit in standardizing ratings? How might you approach this?
+it is definitively a better approach to make variables easier to interpret data easier.Usually, standardization refers to the process of subtracting the mean and dividing by the standard deviation. 
+
+```{r}
+movies_ratings <-read.csv("https://raw.githubusercontent.com/mgino11/SQL_likert/main/Friends_rating.csv")
+
+glimpse(movies_ratings)
+```
+```{r}
+movies_ratings_df <- as.data.frame(movies_ratings)
+movies_ratings_df
+```
+
+## Atemp to graph the Data using Likert Package
+```{r}
+library(likert)
+my_levels <- c("Stongly Disliked",
+               "Disliked",
+               "Neutral",
+               "Liked",
+               "Strongly Liked")
+
+movies_ratings_df <- movies_ratings_df %>%
+  mutate( "Strongly Disliked" = factor("Strongly Disliked",
+                                       levels = my_levels),
+          "Disliked" = factor("Disliked",
+                              levels  = my_levels),
+          "Neutral" = factor("Neutral",
+                             levels = my_levels),
+          "Liked" = factor("Liked", 
+                           levels = my_levels),
+          "Strongly Liked" = factor("Strongly Liked",
+                                    levels = my_levels))
+
+movie_ratings <- likert(movies_ratings_df)
+```
+

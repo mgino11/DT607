@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article SYSTEM "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN">
+-
+<article lang="">
+	-
+    <informaltable frame="all">
+		-
+        <tgroup cols="7.5">
+			-
+            <thead>
+				-
+                <row></row>
+					-
+                <entry>
+                    <para>
+							BookTitle
+						</para>
+                </entry>
+					-
+                <entry>
+                    <para>
+							BookISBN13
+						</para>
+                </entry>
+					-
+                <entry>
+                    <para>
+							BookISBN10
+						</para>
+                </entry>
+					-
+                <entry>
+                    <para>
+							Publisher
+						</para>
+                </entry>
+					-
+                <entry>
+                    <para>
+							Pages
+						</para>
+                </entry>
+					-
+                <entry nameend="c9" namest="c6">
+                    <para>
+							Authors
+						</para>
+                </entry>
+            </row>
+        </thead>
+			-
+        <tbody>
+				-
+            <row>
+					-
+                <entry>
+                    <para>
+							The Science of Self-Empowerment: Awakening the New Human Story
+						</para>
+                </entry>
+					-
+                <entry>
+                    <para>
+							978-1401949327
+						</para>
+                </entry>
+					-
+                <entry>
+                    <para>
+							1401949320
+						</para>
+                </entry>
+					-
+                <entry>
+                    <para>
+							Hay House Inc.
+						</para>
+                </entry>
+					-
+                <entry>
+                    <para>
+							320
+						</para>
+                </entry>
+					-
+                <entry>
+                    <para>
+							Gregg Braden
+						</para>
+                </entry>
+					-
+                <entry nameend="c9" namest="c7">
+                    <para />
+                </entry>
+            </row>
+				-
+            <row>
+					-
+                <entry>
+                    <para>
+							The Telomere Effect
+						</para>
+                </entry>
+					-
+                <entry>
+                    <para>
+							978-1455587988
+						</para>
+                </entry>
+					-
+                <entry>
+                    <para>
+							1455587982
+						</para>
+                </entry>
+					-
+                <entry>
+                    <para>
+							Grand Central Publishing
+						</para>
+                </entry>
+					-
+                <entry>
+                    <para>
+							416
+						</para>
+                </entry>
+					-
+                <entry>
+                    <para>
+							Dr. Elissa Epel
+						</para>
+                </entry>
+					-
+                <entry>
+                    <para>
+							Elizabeth Blackburn
+						</para>
+                </entry>
+					-
+                <entry nameend="c9" namest="c8">
+                    <para />
+                </entry>
+            </row>
+				-
+            <row>
+					-
+                <entry>
+                    <para>
+							Automated Data Collection with R: A Practical Guide to Web Scraping and Text Mining
+						</para>
+                </entry>
+					-
+                <entry>
+                    <para>
+							978-1118834817
+						</para>
+                </entry>
+					-
+                <entry>
+                    <para>
+							111883481X
+						</para>
+                </entry>
+					-
+                <entry>
+                    <para>
+							Wiley 1st edition
+						</para>
+                </entry>
+					-
+                <entry>
+                    <para>
+							446
+						</para>
+                </entry>
+					-
+                <entry>
+                    <para>
+							Simon Munzert
+						</para>
+                </entry>
+					-
+                <entry>
+                    <para>
+							Paul R. Ehrlich
+						</para>
+                </entry>
+					-
+                <entry>
+                    <para>
+							Anne H. Ehrlich
+						</para>
+                </entry>
+					-
+                <entry>
+                    <para />
+                </entry>
+            </row>
+        </tbody>
+    </tgroup>
+</informaltable>
+<para />
+</article>
