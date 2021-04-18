@@ -1,0 +1,13 @@
+TY  - ELEC
+DB  - /z-wcorg/
+DP  - http://worldcat.org
+ID  - 990182937
+LA  - English
+UR  - https://search.ebscohost.com/login.aspx?direct=true&scope=site&db=nlebk&db=nlabk&AN=1533983
+T1  - Text mining with R : a tidy approach
+AU  - Silge, Julia,
+AU  - Robinson, David,
+Y1  - 2017///
+SN  - 9781491981627 1491981628 9781491981603 1491981601 1491981652 9781491981658
+AB  - Chapter 7. Case Study: Comparing Twitter Archives; Getting the Data and Distribution of Tweets; Word Frequencies; Comparing Word Usage; Changes in Word Use; Favorites and Retweets; Summary; Chapter 8. Case Study: Mining NASA Metadata; How Data Is Organized at NASA; Wrangling and Tidying the Data; Some Initial Simple Exploration; Word Co-ocurrences and Correlations; Networks of Description and Title Words; Networks of Keywords; Calculating tf-idf for the Description Fields; What Is tf-idf for the Description Field Words?; Connecting Description Fields to Keywords; Topic Modeling.
+ER  - 
