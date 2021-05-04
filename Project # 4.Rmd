@@ -1,0 +1,125 @@
+---
+title: ""
+author: "MGinorio"
+date: "`r format(Sys.Date(), '%B %d %Y')`"
+output:
+  html_document:
+    highlight: pygments
+    theme: sandstone
+    toc: true
+    toc_float: true
+  prettydoc::html_pretty:
+    theme: cayman
+  pdf_document: default
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Interface for JSON Data
+##### Overview
+### {.tabset .tabset-pills}
+
+#### Overview
+
+The New York Times web site provides a rich set of APIs, as described here: https://developer.nytimes.com/apis
+
+The task is to choose one of the New York Times APIs, construct an interface in R to read in the JSON data, and transform it into an R DataFrame.
+
+![](Images/NYT_APIs.PNG)
+
+#### Packages
+
+```{r packages, message=FALSE, warning=FALSE}
+library(knitr)
+library(jsonlite)
+library(httr)
+library(glue)
+library(dplyr)
+library(shiny)
+
+```
+
+#### Parameters
+
+**Construct an interface in R to read in the JSON data, and transform it into an R Data Frame.**
+
+1. Construct URL Parameter with the desired data to be obtained
+
+
+```{r api}
+
+# https://api.nytimes.com/svc/books/v3/lists/current/hardcover-fiction.json?api-key=yourkey
+
+```
+
+2.- Obtain Json File from API
+
+![Json](Images/Json_view.PNG)
+
+
+#### Read API
+
+For this project I chose to use the Books API. In order to obtain the information we need to specify certain parameters to obtain specific data (as opposed to all the data available)
+
+
+
+```{r url api}
+url_string <- "https://api.nytimes.com/svc/books/v3/lists/{date}/{list}.json?api-key={api_key}"
+
+```
+
+
+**Parameters**
+
+The search parameters for are as follows:
+
+- List -> Hardcover-nonfiction Books
+- Date -> Which are the best sellers during Covid - April 2020
+
+```{r}
+api_key <- Sys.getenv("NYT_TOKEN")
+list <- "hardcover-nonfiction"
+date <- "2020-04-01"
+```
+
+Once parameters are set - we use JSONlite and HTTR to create a function and "GET" the information we requested in the parameters which is inside the the content variable.
+
+```{r}
+raw.data <- fromJSON(rawToChar(GET(glue(url_string))$content))
+book.data <- raw.data$results$books
+
+```
+
+![](Images/books DF.PNG)
+
+#### Dataframe
+
+For the purpose of this project we will work with the following variables.
+
+- Title
+- Author
+- Weeks on list
+- Description
+- Book Image
+
+```{r}
+book.rank.df <-
+  book.data[,c("rank",
+               "weeks_on_list",
+               "title",
+               "author",
+               "description",
+               "book_image")]
+```
+
+**Final Result**
+
+```{r}
+kable(head(book.rank.df,5),caption = "NYT Hardcover Nonfiction Top 5")
+```
+

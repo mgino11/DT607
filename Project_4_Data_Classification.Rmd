@@ -1,0 +1,269 @@
+---
+title: ""
+author: "MGinorio"
+date: "`r format(Sys.Date(), '%B %d %Y')`"
+output:
+  html_document:
+    highlight: pygments
+    theme: sandstone
+    toc: true
+    toc_float: true
+  prettydoc::html_pretty:
+    theme: cayman
+  pdf_document: default
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Classification Model Metrics
+##### Overview
+### {.tabset .tabset-pills}
+
+#### Overview
+
+We can use machine learning to predict labels on documents using a classification model. For both types of prediction questions, we develop a learner or model to describe the relationship between a target or outcome variable and our input features; what is different about a classification model is the nature of that outcome.
+
+- A regression model predicts a numeric or continuous value.
+- A classification model predicts a class label or group membership.
+
+![](Images/Class_2.PNG)
+
+
+#### Packages
+
+```{r packages, message=FALSE, warning=FALSE, eval=FALSE}
+
+library(plyr)
+library(knitr)
+library(readr)
+library(tidyverse)
+library(tidymodels)
+library(DT)
+library(dplyr)
+library(textrecipes)
+library(readr)
+
+set.seed(1234)
+
+```
+
+
+#### Data
+
+Let’s consider the data set of consumer complaints submitted to the US Consumer Finance Protection Bureau.
+
+**Unzip dataset using plyr package**
+
+1. Construct URL Parameter with the desired data to be obtained
+
+```{r plyr, warning=FALSE}
+# temporary directory
+
+library(plyr)
+my_dir <- "/Users/maria/OneDrive - City University of New York/Documents/R/DATA 607/Projects/Project # 4/data"
+
+zip_file <- list.files(path = my_dir, pattern = "*.zip", full.names = TRUE)
+
+ldply(.data = zip_file, .fun = unzip, exdir = my_dir)
+
+```
+
+
+2.- Load Data
+
+```{r load data}
+library(readr)
+
+complaints <- read_csv("data/complaints.csv")
+```
+
+This data set contains a text field with the complaint, along with information regarding what it was for, how and when it was filed, and the response from the bureau.
+
+```{r glimpse data, warning=FALSE, message=FALSE}
+library(dplyr)
+glimpse(complaints)
+```
+
+
+#### Tidy Data
+
+Classification is the method of predicting the class of a given input data point. Classification problems are common in machine learning and they fall under the Supervised learning method.
+
+Under classification we have 2 types:
+
+- Binary Classification
+- Multi-Class Classification
+
+![](Images/Class_1.PNG)
+
+
+**I will build classification model to predict what type of financial product the complaints are referring to, i.e., a label or categorical variable.**
+
+
+```{r tidy data}
+
+# lets take a look at the data "consumer complain narrative"
+
+head(complaints$`Consumer complaint narrative`)
+
+```
+
+```{r consumer narrative tidy, warning=FALSE}
+library(stringr)
+complaints$`Consumer complaint narrative` %>% 
+  str_extract_all("\\{\\$[0-9\\.]*\\}") %>% 
+  compact() %>% 
+  head()
+```
+
+
+#### Model
+
+let’s build a binary classification model to predict whether a submitted complaint is about “Credit reporting, credit repair services, or other personal consumer reports” or not.
+
+This data set includes more possible predictors than the text alone, but for this first model we will only use the text variable 'consumer_complaint_narrative'
+
+Factor outcome variable 'product' with 2 levels
+
+1- "credit"
+2- "other"
+
+```{r levels, warning=FALSE, message=FALSE}
+library(tidymodels)
+
+#create levels
+
+complaints2class <- complaints %>% 
+  mutate(Product = factor(if_else(
+    Product == paste("Credit Reporting, credit repair services,", "or other personal consumer reports"),
+    "Credit", "Other"
+  )))
+
+```
+
+```{r split training testing}
+complaints_split <- initial_split(complaints2class, strata = Product)
+
+complaints_train <- training(complaints_split)
+complaints_test <- testing(complaints_split)
+
+```
+
+```{r train}
+dim(complaints_train)
+```
+
+```{r test}
+
+dim(complaints_test)
+```
+
+**Recipes Package**
+
+Recipes allows to create a specification of preprocessing steps we want to perform.
+
+```{r recipes}
+
+complaints_rec <- complaints %>% 
+  recipe(Product ~ `Consumer complaint narrative`, data = complaints_train)
+```
+
+**Text Recipes**
+
+I will use **textrecipes** to handle the 'consumer_complaint_narrative'
+
+```{r tokenize,  warning=FALSE}
+
+library(textrecipes)
+
+complaints_rec <- complaints_rec %>% 
+  step_tokenize(`Consumer complaint narrative`) %>% 
+  step_tokenfilter(`Consumer complaint narrative`, max_tokens = 1e3) %>% 
+  step_tfidf(`Consumer complaint narrative`)
+
+```
+
+```{r workflow}
+complaint_wf <- workflow() %>% 
+  add_recipe(complaints_rec)
+```
+
+```{r discrim, warning=FALSE, message=FALSE}
+
+library(discrim)
+
+nb_spec <- naive_Bayes() %>% 
+  set_mode("classification") %>% 
+  set_engine("naivebayes")
+
+nb_spec
+
+```
+
+#### Evaluation
+
+I will use resampling methods to evaluate our model
+Each of these splits contains information about how to create cross-validation folds
+
+```{r}
+set.seed(234)
+
+complaints_folds <- vfold_cv(complaints_train)
+
+complaints_folds
+```
+
+**resampling estimates of performance**
+
+```{r resampling estimates}
+
+nb_wf <- workflow() %>% 
+  add_recipe(complaints_rec) %>% 
+  add_model(nb_spec)
+
+nb_wf
+
+```
+
+```{r model fitting, eval=FALSE}
+
+library(naivebayes)
+
+nb_rs <- fit_resamples(
+  nb_wf,
+  complaints_folds,
+  control = control_resamples(save_pred = TRUE)
+)
+
+```
+
+```{r collect metrics, eval=FALSE}
+
+nb_rs_metrics <- collect_metrics(nb_rs)
+
+nb_rs_predictions <- collect_predictions(nb_rs)
+
+
+```
+
+```{r performance metrics, eval=FALSE}
+nb_rs_metrics
+```
+
+```{r, eval=FALSE}
+nb_rs_predictions %>%
+  group_by(id) %>%
+  roc_curve(truth = product, .pred_Credit) %>%
+  autoplot() +
+  labs(
+    color = NULL,
+    title = "ROC curve for US Consumer Finance Complaints",
+    subtitle = "Each resample fold is shown in a different color"
+  )
+```
+
